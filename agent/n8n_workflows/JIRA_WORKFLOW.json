@@ -1,0 +1,1217 @@
+{
+  "name": "JIRA_WORKFLOW",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "685fcfc4-fc2c-4c57-8365-0e00452d4bae"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        -144
+      ],
+      "id": "2d1fbff4-f0ac-4c3d-be22-e54ddf7f586a",
+      "name": "MCP Server Trigger",
+      "webhookId": "685fcfc4-fc2c-4c57-8365-0e00452d4bae"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds",
+          "mode": "list",
+          "cachedResultName": "Customers",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Account Number",
+              "lookupValue": "={{ $json.payload.account_number }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1376,
+        16
+      ],
+      "id": "4721fb9d-bd65-42e5-bbdd-1efed448cc5e",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hqWVxHWzM8rKwnR1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Purpose\nCreate a Jira ticket for a customer issue\n\nWhen to Call\nOnly after successful OTP verification\nWhen the customer requests to raise an issue\nAfter fully understanding and confirming the issue details\n\nRequired Before Calling\nCustomer identity must be verified\nIssue description must be clear and confirmed\n\nArguments\n{\n  \"account_number\": \"10-digit customer account number \",\n  \"issue\": \"Clear and detailed issue description \"\n}",
+        "workflowId": {
+          "__rl": true,
+          "value": "UjXIvboIPcdJqvDXEXENR",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/UjXIvboIPcdJqvDXEXENR",
+          "cachedResultName": "JIRA_WORKFLOW"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payload": "={\n\"account_number\": {{ parseInt($fromAI(\"account_number\", \"Enter Customer Account Number\", \"string\")) }},\n\n\"issue\": \"{{($fromAI(\"issue\", \"Enter the issue of a patient\", \"string\")) }}\"\n}",
+            "function": "raise_jira"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        192
+      ],
+      "id": "1e7ddee4-2637-44ec-afa0-188a3a56f435",
+      "name": "raise_jira"
+    },
+    {
+      "parameters": {
+        "description": "Purpose\nVerify the OTP entered by the customer\n\nWhen to Call\nAfter informing the customer that an OTP was sent\nWhen the customer enters the OTP\nRequired to complete identity verification\n\nArguments\n{\n  \"otp\": \"OTP entered by the customer\"\n}",
+        "workflowId": {
+          "__rl": true,
+          "value": "UjXIvboIPcdJqvDXEXENR",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/UjXIvboIPcdJqvDXEXENR",
+          "cachedResultName": "JIRA_WORKFLOW"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payload": "={\"otp\": {{ parseInt($fromAI(\"otp\", \"Enter the OTP of customer\", \"string\")) }}\n}\n",
+            "function": "verify_otp"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -64,
+        208
+      ],
+      "id": "f055143d-b4b0-4ee0-a7d4-ca127142f7b6",
+      "name": "verify_otp"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "function"
+            },
+            {
+              "name": "payload",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "id": "d24b1b03-8458-4819-abbc-5737ff04e5e5",
+      "name": "Operations Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        560,
+        176
+      ],
+      "typeVersion": 1.1,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "=function",
+              "value": "={{ String($('Operations Trigger').item.json.function || '') }}"
+            },
+            {
+              "key": "payload",
+              "value": "={{ JSON.stringify($('Operations Trigger').item.json.payload) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1,
+      "position": [
+        784,
+        176
+      ],
+      "id": "6ac148a5-68fc-4097-9d53-3d203ebf4f08",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.function }}",
+                    "rightValue": "get_details",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "77dbd27f-fe94-432d-b3b1-4094cb050056"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_details"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "629f4d9f-a88e-47b9-adde-62aa3238fb35",
+                    "leftValue": "={{ $json.function }}",
+                    "rightValue": "verify_otp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "verify_otp"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ab08c978-a7da-47f9-a411-aa193b670449",
+                    "leftValue": "={{ $json.function }}",
+                    "rightValue": "raise_jira",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "raise_jira"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "419e766c-c222-4a92-a7e0-b454eea435c3",
+                    "leftValue": "={{ $json.function }}",
+                    "rightValue": "get_jira_status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_jira_status"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        160
+      ],
+      "id": "33b62741-c280-4214-9a0f-36fd8ba6140e",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "description": "### Purpose\n- Fetch customer details\n- Trigger OTP sending for identity verification\n\n### When to Call\n- Immediately after the customer provides their **10-digit account number**\n- This is the **first tool** in the verification flow\n- Must be called **before any service is provided**\n\n### Arguments\n```json\n{\n  \"account_number\": \"10-digit customer account number \"\n}",
+        "workflowId": {
+          "__rl": true,
+          "value": "UjXIvboIPcdJqvDXEXENR",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/UjXIvboIPcdJqvDXEXENR",
+          "cachedResultName": "JIRA_WORKFLOW"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payload": "={\"account_number\": {{ parseInt($fromAI(\"account_number\", \"Enter Customer Account Number\", \"string\")) }}\n}\n",
+            "function": "get_details"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -528,
+        208
+      ],
+      "id": "6549b07c-04da-4fdb-9cef-52f1b7940871",
+      "name": "get_details"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n\nconst items = $input.all();\nconst otp = Math.floor(100000 + Math.random() * 900000);\nconst phone_number =  \"+91\" + items[0]?.json[\"Phone Number (India)\"];\nconst message =  `Dear Customer, Your otp is ${otp} from AZ Bank`;\n\nreturn [{ json: { phone_number: phone_number, otp:otp,account_number:  $input.first().json['Account Number'],message:message} }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1808,
+        0
+      ],
+      "id": "256478e7-cc90-4d0a-801c-7a63f17addb5",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "from": "+16089461914",
+        "to": "={{ $json.phone_number }}",
+        "message": "={{ $json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        2096,
+        0
+      ],
+      "id": "d679eba1-6e53-4f93-97ad-2a2504a8c9ce",
+      "name": "Send an SMS/MMS/WhatsApp message1",
+      "credentials": {
+        "twilioApi": {
+          "id": "8HMxiTwF8HgOVEBV",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3409a3ba-3145-48f9-b18c-51da1e98edef",
+              "leftValue": "={{ $json}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1584,
+        16
+      ],
+      "id": "4fbbad2b-8379-4557-ad39-0648f171b93a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds",
+          "mode": "list",
+          "cachedResultName": "Customers",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Current OTP": "={{ $json.otp }}",
+            "Account Number": "={{ $json.account_number }}"
+          },
+          "matchingColumns": [
+            "Account Number"
+          ],
+          "schema": [
+            {
+              "id": "Customer ID",
+              "displayName": "Customer ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Account Holder Name",
+              "displayName": "Account Holder Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Account Number",
+              "displayName": "Account Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "IFSC Code",
+              "displayName": "IFSC Code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Phone Number (India)",
+              "displayName": "Phone Number (India)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Current OTP",
+              "displayName": "Current OTP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2080,
+        -256
+      ],
+      "id": "a8d44de8-e6ea-4be0-b73d-fae9d1d833f3",
+      "name": "Update row in sheet",
+      "alwaysOutputData": false,
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hqWVxHWzM8rKwnR1",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Your OTP was sucessfully sent to your registerd number"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds",
+          "mode": "list",
+          "cachedResultName": "Customers",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Current OTP",
+              "lookupValue": "={{ $json.payload.otp }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1488,
+        176
+      ],
+      "id": "736c0625-db04-452a-b106-7816845a7117",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hqWVxHWzM8rKwnR1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "project": {
+          "__rl": true,
+          "value": "10002",
+          "mode": "list",
+          "cachedResultName": "Support"
+        },
+        "issueType": {
+          "__rl": true,
+          "value": "10008",
+          "mode": "list",
+          "cachedResultName": "[System] Incident"
+        },
+        "summary": "={{ $('Switch').item.json.payload.issue }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        480
+      ],
+      "id": "a9221c17-928e-4394-8146-6ec335258b13",
+      "name": "Create an issue",
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "KaHh9jmqMCJPwL4H",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds",
+          "mode": "list",
+          "cachedResultName": "Customers",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Current Jira ID": "={{ $json.id }}",
+            "Current Issue": "={{ $('Switch').item.json.payload.issue }}",
+            "Account Number": "={{ $('Switch').item.json.payload.account_number }}",
+            "Current Key": "={{ $json.key }}"
+          },
+          "matchingColumns": [
+            "Account Number"
+          ],
+          "schema": [
+            {
+              "id": "Customer ID",
+              "displayName": "Customer ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Account Holder Name",
+              "displayName": "Account Holder Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Account Number",
+              "displayName": "Account Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "IFSC Code",
+              "displayName": "IFSC Code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Phone Number (India)",
+              "displayName": "Phone Number (India)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Current OTP",
+              "displayName": "Current OTP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Current Jira ID",
+              "displayName": "Current Jira ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Current Issue",
+              "displayName": "Current Issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Current Key",
+              "displayName": "Current Key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1952,
+        448
+      ],
+      "id": "448159fb-9938-4ecd-b8d8-54571edd1d7c",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hqWVxHWzM8rKwnR1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "transitions",
+        "issueKey": "={{ $json['Current Key'] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        736
+      ],
+      "id": "a81bc160-8ff9-4fc9-9e12-4d8dce14ef18",
+      "name": "Get the status of an issue",
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "KaHh9jmqMCJPwL4H",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Purpose\nRetrieve the current status of a Jira ticket\n\nWhen to Call\nOnly after successful OTP verification\nWhen the customer asks for ticket status\nAfter receiving the 10-digit account number from the customer\n\nArguments\n{\n  \"account_number\": \"10-digit customer account number \"\n}",
+        "workflowId": {
+          "__rl": true,
+          "value": "UjXIvboIPcdJqvDXEXENR",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/UjXIvboIPcdJqvDXEXENR",
+          "cachedResultName": "JIRA_WORKFLOW"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payload": "={\"account_number\": {{ parseInt($fromAI(\"account_number\", \"Enter Customer Account Number\", \"string\")) }}\n}\n",
+            "function": "get_jira_status"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        112,
+        192
+      ],
+      "id": "eabedfb1-131e-4354-b292-37ed8ebb080e",
+      "name": "get_jira_status"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds",
+          "mode": "list",
+          "cachedResultName": "Customers",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Account Number",
+              "lookupValue": "={{ $json.payload.account_number }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1312,
+        752
+      ],
+      "id": "21bb73f2-f316-46f2-93dc-bdba327df892",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hqWVxHWzM8rKwnR1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3409a3ba-3145-48f9-b18c-51da1e98edef",
+              "leftValue": "={{ $json}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "fe7323f0-5439-4354-806b-23d42b975f12",
+              "leftValue": "={{ $json['Current Key'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1552,
+        752
+      ],
+      "id": "d2b33530-9246-4cfa-a24b-bc12f7da0a30",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds",
+          "mode": "list",
+          "cachedResultName": "Customers",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bFToDh6gzmQ6fRD7y_uQ769QQeIUXwW51W-6bTPCeds/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Account Number",
+              "lookupValue": "={{ $json.payload.account_number }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1376,
+        480
+      ],
+      "id": "5ff5171e-9ac2-4d52-a951-4f198e66159f",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hqWVxHWzM8rKwnR1",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Operations Trigger": [
+      {
+        "json": {
+          "function": "raise_jira",
+          "payload": {
+            "account_number": 1002003001,
+            "issue": "having issues in my net banking"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "raise_jira": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "verify_otp": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Operations Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execution Data": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_details": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp message1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an issue": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_jira_status": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Get the status of an issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Create an issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "452912d2-bfcb-4334-ae28-b7e8bd3394fb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7837921e0528e3a2e1e782382aa0f541f12f565d3f98d16ec974c5ab4957a75a"
+  },
+  "id": "UjXIvboIPcdJqvDXEXENR",
+  "tags": []
+}
