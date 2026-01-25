@@ -1,2 +1,2 @@
-uv pip install fastapi
-uv pip install uvicorn
+fastapi
+uvicorn
