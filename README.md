@@ -2,23 +2,22 @@
 
 This project is an **AI-powered real-time voice + chat interaction platform** built on **LiveKit** and modern AI infrastructure. It enables natural, two-way conversations where intelligent agents can listen, understand, reason, and respond instantly.
 
-This platform powers an intelligent AI support agent designed specifically for **AZ Bank customer service automation**. It enables real-time voice and chat assistance that can verify users, support by banking information,  retrieve account information, resolve issues, and automatically create support tickets.
+This platform powers an intelligent AI support agent designed specifically for **AZ Bank customer service automation**.
 
+It is designed for real-world enterprise use cases such as:
+- Banking customer support
+- Customer verification
+- OTP workflows
+- Jira ticket automation for customer issues
+- Real-time conversational assistance
+
+  
 The system integrates:
-
 - STT → LLM → TTS pipeline
 - Retrieval-Augmented Generation (RAG)
 - n8n workflow automation
 - MCP tool connectivity
 - Banking workflow integrations
-
-It is designed for real-world enterprise use cases such as:
-
-- Banking customer support
-- Customer verification
-- OTP workflows
-- Jira ticket automation
-- Real-time conversational assistance
 
 ---
 
