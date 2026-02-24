@@ -1,4 +1,4 @@
-# LiveKit AI Voice Agent Platform
+# AZ Bank AI Voice Agent Platform
 
 This project is an **AI-powered real-time voice + chat interaction platform** built on **LiveKit** and modern AI infrastructure. It enables natural, two-way conversations where intelligent agents can listen, understand, reason, and respond instantly.
 
