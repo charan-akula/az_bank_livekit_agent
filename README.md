@@ -30,16 +30,15 @@ React (Vite) interface for real-time user interaction.
 
 ### Backend
 FastAPI service for:
-- Authentication
+- Room Creation & Agent Dispatches
 - Token generation
 - API orchestration
 
 ### Agent
 LiveKit AI voice agent responsible for:
-- Speech processing
+- Real time Conversation
 - Reasoning
 - Tool calling
-- Workflow triggering
 
 ---
 
