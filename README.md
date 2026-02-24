@@ -1,266 +1,256 @@
 # LiveKit AI Voice Agent Platform
 
-This project is a **AI voice interaction platform** built on **LiveKit**, designed to handle real-time voice conversations integrated with **n8n workflows**, **Jira automation**, and **Excel/Google Sheets–based data storage** to support the customers of a AZ Bank.
+This project is an **AI-powered real-time voice + chat interaction platform** built on **LiveKit** and modern AI infrastructure. It enables natural, two-way conversations where intelligent agents can listen, understand, reason, and respond instantly.
 
-The system consists of:
+This platform powers an intelligent AI support agent designed specifically for **AZ Bank customer service automation**. It enables real-time voice and chat assistance that can verify users, support by banking information,  retrieve account information, resolve issues, and automatically create support tickets.
 
-* **Frontend**: React (Vite) web interface for user interaction
-* **Backend**: FastAPI service for authentication, token generation, and API coordination
-* **Agent**: LiveKit AI voice agent that processes conversations and triggers n8n workflows
+The system integrates:
 
-This architecture enables real-time voice support use cases such as **banking support**, **customer verification**, **ticket creation**, and **workflow automation**.
+- STT → LLM → TTS pipeline
+- Retrieval-Augmented Generation (RAG)
+- n8n workflow automation
+- MCP tool connectivity
+- Banking workflow integrations
 
----
+It is designed for real-world enterprise use cases such as:
 
-## ✅ Prerequisites
-
-Ensure the following are installed before starting:
-
-* **Node.js 18+** and **npm**
-* **Python 3.11+**
-* **UV package manager** (recommended) or **pip**
-* **LiveKit account**
-* **n8n account**
+- Banking customer support
+- Customer verification
+- OTP workflows
+- Jira ticket automation
+- Real-time conversational assistance
 
 ---
 
-## 🚀 Step-by-Step Setup
+# 🏗️ Architecture Overview
+
+The system consists of three main components:
+
+### Frontend
+React (Vite) interface for real-time user interaction.
+
+### Backend
+FastAPI service for:
+- Authentication
+- Token generation
+- API orchestration
+
+### Agent
+LiveKit AI voice agent responsible for:
+- Speech processing
+- Reasoning
+- Tool calling
+- Workflow triggering
 
 ---
 
-### 1️⃣ Clone the Repository
+# ✅ Prerequisites
+
+Install these before setup:
+
+- Node.js 18+
+- Python 3.11+
+- UV package manager (recommended) or pip
+- LiveKit account
+- n8n account (cloud or self-hosted)
+
+---
+
+# 🚀 Setup Guide
+
+---
+
+## 1️⃣ Clone Repository
 
 ```bash
 git clone https://github.com/<your-username>/<repo-name>.git
-cd livekit-agent
+cd az_bank_livekit_agent
 ```
 
 ---
 
-### 2️⃣ Create Environment File
+## 2️⃣ Create Environment File
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the project root and add:
+
+```
+# LiveKit Agent Configuration
+
+LIVEKIT_URL=wss://your-livekit-server.livekit.cloud
+LIVEKIT_API_KEY=your_livekit_api_key_here
+LIVEKIT_API_SECRET=your_livekit_api_secret_here
+
+# n8n MCP Integration
+N8N_MCP_URL=https://your-n8n-instance.com/mcp/webhook
+
+# RAG Pipeline
+PDF_PATH=./rag/az_bank.pdf
+
+# Google AI (Gemini embeddings/LLM)
+GOOGLE_API_KEY=your_google_api_key_here
+```
+
+⚠️ **Never commit `.env` files**
+
+---
+
+## 3️⃣ Install Dependencies
+
+Run from project root:
 
 ```bash
-cp .env.example .env
+uv pip install -r requirements.txt
 ```
-
-`.env.example`
-
-```
-LIVEKIT_URL=
-LIVEKIT_API_KEY=
-LIVEKIT_API_SECRET=
-N8N_MCP_URL=
-```
-
-⚠️ Never commit `.env` files to GitHub
 
 ---
 
-### 3️⃣ LiveKit Setup
+## 4️⃣ LiveKit Setup
 
-1. Go to 👉 [https://livekit.io/](https://livekit.io/)
-2. Sign up or log in
-3. Create a new project
-4. Copy the following:
+1. Create account
+2. Create project
+3. Copy credentials:
 
-   * LiveKit URL
-   * API Key
-   * API Secret
+- URL
+- API Key
+- API Secret
 
-Update your root `.env` file:
-
-```
-LIVEKIT_URL=wss://xxxx.livekit.cloud
-LIVEKIT_API_KEY=xxxxxxxx
-LIVEKIT_API_SECRET=xxxxxxxx
-```
-
-These credentials are used by:
-
-* Backend
-* Agent
+Paste into `.env`.
 
 ---
 
-### 4️⃣ n8n Setup
+## 5️⃣ n8n Setup
 
-1. Go to 👉 [https://n8n.io/](https://n8n.io/)
-2. Sign up or log in
-3. Create a new workflow
-4. Import the workflow JSON located at:
+You can either:
+
+- Self-host n8n
+**OR**
+- Use 14-day free trial cloud version
+
+Steps:
+
+1. Create workflow
+2. Import JSON:
 
 ```
 agent/workflows/JIRA_WORKFLOW.json
 ```
 
-5. Configure required credentials inside n8n:
+3. Configure credentials:
 
-   * Jira
-   * Google Sheets or Excel
-   * Any additional API tokens
+Required integrations:
 
-6. Copy the Webhook / MCP URL
+- Jira
+- Google Sheets OR Excel
+- Twilio (for OTP sending)
 
-Update `.env`:
+👉 Optional alternative  
+Instead of Twilio, you can:
 
-```
-N8N_MCP_URL=https://your-n8n-url/webhook/xxxx
-```
+- Use Gmail node
+- Send OTP via email
+- Select Gmail column from Sheets
 
----
-
-### 5️⃣ Excel / Google Sheets Setup (Data Store)
-
-Currently, the application uses Excel or Google Sheets as the data store.
-
-Create a sheet with the **exact column names** below:
-
-* Customer ID
-* Account Holder Name
-* Account Number
-* IFSC Code
-* Phone Number (India)
-* Email
-* Current OTP
-* Current Jira ID
-* Current Issue
-* Current Key
-
-⚠️ Column names must match exactly for workflows to function correctly.
-
----
-
-### 6️⃣ Backend Setup (FastAPI)
-
-```bash
-cd backend
-```
-
-Install dependencies:
-
-```bash
-uv pip install -r requirements.txt
-```
-
-Run the backend:
-
-```bash
-uvicorn main:app --reload
-```
-
-Backend will be available at:
+4. Copy MCP webhook URL into `.env`:
 
 ```
-http://localhost:8000
+N8N_MCP_URL=https://your-n8n-instance.com/mcp/webhook
 ```
 
 ---
 
-### 7️⃣ Agent Setup (LiveKit AI Agent)
+## 6️⃣ Data Store Setup (Sheets / Excel)
 
-```bash
-cd agent
-```
+Create a sheet with **exact column names**:
 
-Install dependencies:
+- Customer ID
+- Account Holder Name
+- Account Number
+- IFSC Code
+- Phone Number (India)
+- Email
+- Current OTP
+- Current Jira ID
+- Current Issue
+- Current Key
 
-```bash
-uv pip install -r requirements.txt
-```
-
-Start the agent:
-
-```bash
-python lkt_agent.py
-```
-
-The agent connects to:
-
-* LiveKit
-* n8n
-* Backend
+⚠️ Column names must match exactly.
 
 ---
 
-### 8️⃣ Frontend Setup (React + Vite)
+# ▶️ Run Application
+
+Start services in order:
+
+---
+
+### 1️⃣ Start Backend
+
+```bash
+uvicorn backend.main:app --reload
+```
+
+---
+
+### 2️⃣ Start Agent
+
+```bash
+python agent/lkt_agent.py
+```
+
+---
+
+### 3️⃣ Start Frontend
 
 ```bash
 cd frontend
-```
-
-Install dependencies:
-
-```bash
 npm install
-```
-
-Start the frontend:
-
-```bash
 npm run dev
 ```
 
-Frontend will be available at:
+---
+
+🌐 Open in browser:
 
 ```
-http://localhost:5173/
+http://localhost:5173
 ```
 
 ---
 
-## ▶️ Final Run Order (IMPORTANT)
+# 🔐 Security Notes
 
-Start the services in the following order:
-
-### 1️⃣ Backend
-
-```bash
-cd backend
-uvicorn main:app --reload
-```
-
-### 2️⃣ Agent
-
-```bash
-cd agent
-python lkt_agent.py
-```
-
-### 3️⃣ Frontend
-
-```bash
-cd frontend
-npm run dev
-```
-
-🌐 Open in Browser:
-
-```
-http://localhost:5173/
-```
+- `.env` is ignored by Git
+- Never expose API keys in frontend
+- Rotate credentials if compromised
+- Do not upload vector DB or secrets
 
 ---
 
-## 🔐 Security Notes
+# 📦 Features
 
-* `.env` files are excluded via `.gitignore`
-* Do not expose secrets in frontend code
-* Rotate LiveKit and n8n credentials if compromised
-
----
-
-## 📌 Use Cases
-
-* AI-powered voice-based customer support
-* Automated Jira ticket creation
-* Banking and KYC verification flows
-* Workflow orchestration via n8n
-* Real-time voice interaction using LiveKit
+- Real-time Voice + Chat AI Agent
+- RAG knowledge retrieval
+- LiveKit streaming voice
+- Tool calling via MCP
+- Workflow automation via n8n
+- OTP verification
+- Jira ticket automation
+- Banking workflow orchestration
 
 ---
 
-## 👤 Author
+# 📌 Use Cases
 
-**Charan** – LiveKit AI Voice Agent Platform
+- AI customer support agent
+- Automated banking assistant
+- Voice-based helpdesk
+- Identity verification systems
+- Conversational workflow automation
+- Enterprise support bots
+
+---
+
+# 👤 Author
+
+**Charan**  
+LiveKit AI Voice Agent Platform
